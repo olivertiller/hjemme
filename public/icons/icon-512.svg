@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1a1512"/>
+  <!-- Roof -->
+  <path d="M80 250 L256 100 L432 250Z" fill="#3d332a"/>
+  <!-- Wall -->
+  <rect x="120" y="250" width="272" height="180" rx="8" fill="#2e2621"/>
+  <!-- Door -->
+  <rect x="220" y="310" width="72" height="120" rx="8" fill="#3d332a"/>
+  <circle cx="278" cy="375" r="6" fill="#b8c9a3"/>
+  <!-- Windows with warm light -->
+  <rect x="140" y="275" width="60" height="55" rx="6" fill="#e8d5a3" opacity="0.85"/>
+  <rect x="312" y="275" width="60" height="55" rx="6" fill="#e8d5a3" opacity="0.85"/>
+  <!-- Window panes -->
+  <line x1="170" y1="275" x2="170" y2="330" stroke="#2e2621" stroke-width="3"/>
+  <line x1="140" y1="302" x2="200" y2="302" stroke="#2e2621" stroke-width="3"/>
+  <line x1="342" y1="275" x2="342" y2="330" stroke="#2e2621" stroke-width="3"/>
+  <line x1="312" y1="302" x2="372" y2="302" stroke="#2e2621" stroke-width="3"/>
+</svg>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#1a1512" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Er Oliver hjemme?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-dark: #1a1512;
+      --bg-card: #231e1a;
+      --text-primary: #f5ebe0;
+      --text-muted: #a89888;
+      --accent-home: #b8c9a3;
+      --accent-home-glow: rgba(184, 201, 163, 0.15);
+      --accent-away: #c97b5a;
+      --accent-away-glow: rgba(201, 123, 90, 0.1);
+      --radius: 24px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    /* Ambient glow behind the house */
+    .glow {
+      position: fixed;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0;
+      transition: opacity 1.2s ease, background 1.2s ease;
+      pointer-events: none;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      z-index: 0;
+    }
+    .glow.home { background: var(--accent-home); opacity: 0.18; }
+    .glow.away { background: var(--accent-away); opacity: 0.10; }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+      max-width: 380px;
+      width: 100%;
+    }
+
+    /* House illustration */
+    .house-wrap {
+      position: relative;
+      width: 160px;
+      height: 160px;
+    }
+
+    .house-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+      transition: filter 0.8s ease;
+    }
+    .house-svg.home {
+      filter: drop-shadow(0 4px 30px rgba(184, 201, 163, 0.25));
+    }
+
+    .house-window-light {
+      transition: opacity 0.8s ease, fill 0.8s ease;
+    }
+
+    /* Status text */
+    .status-block {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .question {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.6rem;
+      color: var(--text-muted);
+      letter-spacing: -0.02em;
+    }
+
+    .answer {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3rem;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      transition: color 0.8s ease;
+    }
+    .answer.home { color: var(--accent-home); }
+    .answer.away { color: var(--accent-away); }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 4px;
+    }
+
+    /* Pulse dot */
+    .pulse-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      transition: background 0.8s ease;
+    }
+    .pulse-dot.home {
+      background: var(--accent-home);
+      animation: pulse-home 2.4s ease-in-out infinite;
+    }
+    .pulse-dot.away {
+      background: var(--accent-away);
+      animation: none;
+      opacity: 0.5;
+    }
+
+    @keyframes pulse-home {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(184, 201, 163, 0.5); }
+      50% { box-shadow: 0 0 0 10px rgba(184, 201, 163, 0); }
+    }
+
+    .live-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      transition: color 0.8s ease;
+    }
+    .live-label.home { color: var(--accent-home); }
+
+    /* Updated timestamp */
+    .timestamp {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+      text-align: center;
+    }
+
+    /* Drop-by card */
+    .cta-card {
+      width: 100%;
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      text-align: center;
+      transition: background 0.8s ease, border-color 0.8s ease;
+      border: 1px solid transparent;
+    }
+    .cta-card.home {
+      background: var(--accent-home-glow);
+      border-color: rgba(184, 201, 163, 0.12);
+    }
+    .cta-card.away {
+      background: var(--accent-away-glow);
+      border-color: rgba(201, 123, 90, 0.08);
+    }
+    .cta-text {
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .cta-emoji {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* Loading state */
+    .loading .answer { color: var(--text-muted); }
+
+    /* Fade-in on load */
+    .container {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fade-up 0.7s ease 0.2s forwards;
+    }
+    @keyframes fade-up {
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow" id="glow"></div>
+
+  <div class="container" id="app">
+    <div class="pulse-row">
+      <span class="pulse-dot" id="pulseDot"></span>
+      <span class="live-label" id="liveLabel">Oppdaterer …</span>
+    </div>
+
+    <div class="house-wrap">
+      <svg class="house-svg" id="houseSvg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Chimney -->
+        <rect x="108" y="30" width="16" height="30" rx="2" fill="#3d332a"/>
+        <!-- Roof -->
+        <path d="M12 78 L80 24 L148 78Z" fill="#3d332a" stroke="#4d4238" stroke-width="1"/>
+        <!-- Walls -->
+        <rect x="28" y="78" width="104" height="66" rx="4" fill="#2e2621"/>
+        <!-- Door -->
+        <rect x="66" y="104" width="28" height="40" rx="4" fill="#3d332a"/>
+        <circle cx="88" cy="126" r="2.5" fill="#6b5d50"/>
+        <!-- Windows -->
+        <rect class="house-window-light" id="winL" x="38" y="92" width="22" height="22" rx="3" fill="#3d332a" opacity="0.5"/>
+        <rect class="house-window-light" id="winR" x="100" y="92" width="22" height="22" rx="3" fill="#3d332a" opacity="0.5"/>
+        <!-- Window panes -->
+        <line x1="49" y1="92" x2="49" y2="114" stroke="#2e2621" stroke-width="1.5"/>
+        <line x1="38" y1="103" x2="60" y2="103" stroke="#2e2621" stroke-width="1.5"/>
+        <line x1="111" y1="92" x2="111" y2="114" stroke="#2e2621" stroke-width="1.5"/>
+        <line x1="100" y1="103" x2="122" y2="103" stroke="#2e2621" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <div class="status-block">
+      <div class="question">Er Oliver hjemme?</div>
+      <div class="answer" id="answer">…</div>
+      <div class="subtitle" id="subtitle"></div>
+    </div>
+
+    <div class="cta-card" id="ctaCard">
+      <span class="cta-emoji" id="ctaEmoji"></span>
+      <span class="cta-text" id="ctaText"></span>
+    </div>
+
+    <div class="timestamp" id="timestamp"></div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    const POLL_INTERVAL = 30_000; // 30 seconds
+    let currentStatus = null;
+
+    function timeAgo(dateStr) {
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'Akkurat nå';
+      if (mins < 60) return `${mins} min siden`;
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return `${hrs} time${hrs > 1 ? 'r' : ''} siden`;
+      const days = Math.floor(hrs / 24);
+      return `${days} dag${days > 1 ? 'er' : ''} siden`;
+    }
+
+    function render(status) {
+      const { home, updatedAt } = status;
+      const cls = home ? 'home' : 'away';
+
+      $('glow').className = `glow ${cls}`;
+      $('pulseDot').className = `pulse-dot ${cls}`;
+      $('liveLabel').className = `live-label ${cls}`;
+      $('liveLabel').textContent = home ? 'Hjemme nå' : 'Ikke hjemme';
+      $('houseSvg').className.baseVal = `house-svg ${cls}`;
+
+      // Window lights
+      const winColor = home ? '#e8d5a3' : '#3d332a';
+      const winOpacity = home ? '0.9' : '0.5';
+      $('winL').setAttribute('fill', winColor);
+      $('winR').setAttribute('fill', winColor);
+      $('winL').setAttribute('opacity', winOpacity);
+      $('winR').setAttribute('opacity', winOpacity);
+
+      $('answer').className = `answer ${cls}`;
+      $('answer').textContent = home ? 'Ja!' : 'Nei';
+
+      $('subtitle').textContent = home
+        ? 'Stikk gjerne innom!'
+        : 'Prøv igjen senere.';
+
+      $('ctaCard').className = `cta-card ${cls}`;
+      $('ctaEmoji').textContent = home ? '👋' : '🚶';
+      $('ctaText').textContent = home
+        ? 'Døra er åpen for besøk — bare stikk innom!'
+        : 'Oliver er ute — vent litt og sjekk igjen snart.';
+
+      $('timestamp').textContent = `Sist oppdatert: ${timeAgo(updatedAt)}`;
+    }
+
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        if (!res.ok) throw new Error('Feil ved henting');
+        const data = await res.json();
+        currentStatus = data;
+        render(data);
+      } catch (err) {
+        console.error('Statusfeil:', err);
+        $('answer').textContent = '?';
+        $('subtitle').textContent = 'Klarte ikke å hente status';
+      }
+    }
+
+    fetchStatus();
+    setInterval(fetchStatus, POLL_INTERVAL);
+
+    // Update the relative timestamp every minute
+    setInterval(() => {
+      if (currentStatus) {
+        $('timestamp').textContent = `Sist oppdatert: ${timeAgo(currentStatus.updatedAt)}`;
+      }
+    }, 60_000);
+  </script>
+</body>
+</html>
