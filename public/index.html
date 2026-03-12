@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#1a1512" />
+  <meta name="theme-color" content="#f5f0eb" />
   <link rel="manifest" href="/manifest.json" />
   <title>Er Oliver hjemme?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,14 +13,14 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-dark: #1a1512;
-      --bg-card: #231e1a;
-      --text-primary: #f5ebe0;
-      --text-muted: #a89888;
-      --accent-home: #b8c9a3;
-      --accent-home-glow: rgba(184, 201, 163, 0.15);
-      --accent-away: #c97b5a;
-      --accent-away-glow: rgba(201, 123, 90, 0.1);
+      --bg-dark: #f5f0eb;
+      --bg-card: #ffffff;
+      --text-primary: #2c2420;
+      --text-muted: #8a7b6b;
+      --accent-home: #5a8a3c;
+      --accent-home-glow: rgba(90, 138, 60, 0.1);
+      --accent-away: #c0623e;
+      --accent-away-glow: rgba(192, 98, 62, 0.07);
       --radius: 24px;
     }
 
@@ -78,11 +78,11 @@
     .house-svg {
       width: 100%;
       height: 100%;
-      filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+      filter: drop-shadow(0 4px 20px rgba(0,0,0,0.1));
       transition: filter 0.8s ease;
     }
     .house-svg.home {
-      filter: drop-shadow(0 4px 30px rgba(184, 201, 163, 0.25));
+      filter: drop-shadow(0 4px 30px rgba(90, 138, 60, 0.2));
     }
 
     .house-window-light {
@@ -146,8 +146,8 @@
     }
 
     @keyframes pulse-home {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(184, 201, 163, 0.5); }
-      50% { box-shadow: 0 0 0 10px rgba(184, 201, 163, 0); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(90, 138, 60, 0.5); }
+      50% { box-shadow: 0 0 0 10px rgba(90, 138, 60, 0); }
     }
 
     .live-label {
@@ -179,11 +179,11 @@
     }
     .cta-card.home {
       background: var(--accent-home-glow);
-      border-color: rgba(184, 201, 163, 0.12);
+      border-color: rgba(90, 138, 60, 0.15);
     }
     .cta-card.away {
       background: var(--accent-away-glow);
-      border-color: rgba(201, 123, 90, 0.08);
+      border-color: rgba(192, 98, 62, 0.1);
     }
     .cta-text {
       font-size: 1.05rem;
@@ -222,22 +222,22 @@
     <div class="house-wrap">
       <svg class="house-svg" id="houseSvg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
         <!-- Chimney -->
-        <rect x="108" y="30" width="16" height="30" rx="2" fill="#3d332a"/>
+        <rect x="108" y="30" width="16" height="30" rx="2" fill="#c4b8a8"/>
         <!-- Roof -->
-        <path d="M12 78 L80 24 L148 78Z" fill="#3d332a" stroke="#4d4238" stroke-width="1"/>
+        <path d="M12 78 L80 24 L148 78Z" fill="#c4b8a8" stroke="#b0a494" stroke-width="1"/>
         <!-- Walls -->
-        <rect x="28" y="78" width="104" height="66" rx="4" fill="#2e2621"/>
+        <rect x="28" y="78" width="104" height="66" rx="4" fill="#ddd5c9"/>
         <!-- Door -->
-        <rect x="66" y="104" width="28" height="40" rx="4" fill="#3d332a"/>
-        <circle cx="88" cy="126" r="2.5" fill="#6b5d50"/>
+        <rect x="66" y="104" width="28" height="40" rx="4" fill="#b0a494"/>
+        <circle cx="88" cy="126" r="2.5" fill="#8a7b6b"/>
         <!-- Windows -->
-        <rect class="house-window-light" id="winL" x="38" y="92" width="22" height="22" rx="3" fill="#3d332a" opacity="0.5"/>
-        <rect class="house-window-light" id="winR" x="100" y="92" width="22" height="22" rx="3" fill="#3d332a" opacity="0.5"/>
+        <rect class="house-window-light" id="winL" x="38" y="92" width="22" height="22" rx="3" fill="#b0a494" opacity="0.5"/>
+        <rect class="house-window-light" id="winR" x="100" y="92" width="22" height="22" rx="3" fill="#b0a494" opacity="0.5"/>
         <!-- Window panes -->
-        <line x1="49" y1="92" x2="49" y2="114" stroke="#2e2621" stroke-width="1.5"/>
-        <line x1="38" y1="103" x2="60" y2="103" stroke="#2e2621" stroke-width="1.5"/>
-        <line x1="111" y1="92" x2="111" y2="114" stroke="#2e2621" stroke-width="1.5"/>
-        <line x1="100" y1="103" x2="122" y2="103" stroke="#2e2621" stroke-width="1.5"/>
+        <line x1="49" y1="92" x2="49" y2="114" stroke="#ddd5c9" stroke-width="1.5"/>
+        <line x1="38" y1="103" x2="60" y2="103" stroke="#ddd5c9" stroke-width="1.5"/>
+        <line x1="111" y1="92" x2="111" y2="114" stroke="#ddd5c9" stroke-width="1.5"/>
+        <line x1="100" y1="103" x2="122" y2="103" stroke="#ddd5c9" stroke-width="1.5"/>
       </svg>
     </div>
 
@@ -283,7 +283,7 @@
       $('houseSvg').className.baseVal = `house-svg ${cls}`;
 
       // Window lights
-      const winColor = home ? '#e8d5a3' : '#3d332a';
+      const winColor = home ? '#f0c84a' : '#b0a494';
       const winOpacity = home ? '0.9' : '0.5';
       $('winL').setAttribute('fill', winColor);
       $('winR').setAttribute('fill', winColor);
