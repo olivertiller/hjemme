@@ -16,7 +16,7 @@ function loadState() {
       return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
     }
   } catch (_) {}
-  return { home: false, updatedAt: new Date().toISOString() };
+  return { home: false, updatedAt: new Date().toISOString(), source: 'manual' };
 }
 
 function saveState(state) {
@@ -38,6 +38,7 @@ app.get('/api/status', (_req, res) => {
   res.json({
     home: state.home,
     updatedAt: state.updatedAt,
+    source: state.source || 'manual',
   });
 });
 
@@ -48,18 +49,20 @@ app.post('/api/status', (req, res) => {
     return res.status(401).json({ error: 'Ugyldig token' });
   }
 
-  const { home } = req.body;
+  const { home, source } = req.body;
   if (typeof home !== 'boolean') {
     return res.status(400).json({ error: 'Feltet "home" må være true eller false' });
   }
 
   state.home = home;
   state.updatedAt = new Date().toISOString();
+  state.source = source === 'phone' ? 'phone' : 'manual';
   saveState(state);
 
   res.json({
     home: state.home,
     updatedAt: state.updatedAt,
+    source: state.source,
   });
 });
 

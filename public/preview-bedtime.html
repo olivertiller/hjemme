@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Preview: Leggetid</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-dark: #f5f0eb;
+      --bg-card: #ffffff;
+      --text-primary: #2c2420;
+      --text-muted: #8a7b6b;
+      --accent-sleep: #7b8cba;
+      --accent-sleep-glow: rgba(123, 140, 186, 0.10);
+      --radius: 24px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .glow {
+      position: fixed;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      z-index: 0;
+      background: var(--accent-sleep);
+      opacity: 0.14;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+      max-width: 380px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fade-up 0.7s ease 0.2s forwards;
+    }
+
+    .house-wrap {
+      position: relative;
+      width: 160px;
+      height: 160px;
+    }
+
+    .house-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 4px 30px rgba(123, 140, 186, 0.2));
+    }
+
+    .status-block {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .question {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.6rem;
+      color: var(--text-muted);
+      letter-spacing: -0.02em;
+    }
+
+    .answer {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3rem;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--accent-sleep);
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 4px;
+    }
+
+    .pulse-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-sleep);
+      animation: pulse-sleep 3.2s ease-in-out infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes pulse-sleep {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(123, 140, 186, 0.4); opacity: 0.7; }
+      50% { box-shadow: 0 0 0 8px rgba(123, 140, 186, 0); opacity: 0.35; }
+    }
+
+    .live-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-sleep);
+    }
+
+    .cta-card {
+      width: 100%;
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      text-align: center;
+      border: 1px solid rgba(123, 140, 186, 0.15);
+      background: var(--accent-sleep-glow);
+    }
+    .cta-text {
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .cta-emoji {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(44, 36, 32, 0.05);
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+    }
+
+    .timestamp {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+      text-align: center;
+    }
+
+    /* Zzz sleep animation */
+    .zzz {
+      font-family: 'DM Serif Display', serif;
+      fill: var(--accent-sleep);
+      opacity: 0;
+    }
+    .zzz1 { animation: zzz-float 3s ease-in-out infinite; }
+    .zzz2 { animation: zzz-float 3s ease-in-out 1s infinite; }
+    .zzz3 { animation: zzz-float 3s ease-in-out 2s infinite; }
+
+    @keyframes zzz-float {
+      0% { opacity: 0; transform: translate(0, 0) scale(0.7); }
+      20% { opacity: 0.8; }
+      80% { opacity: 0.3; }
+      100% { opacity: 0; transform: translate(8px, -18px) scale(1); }
+    }
+
+    @keyframes fade-up {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .preview-banner {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent-sleep);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+      z-index: 10;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-banner">PREVIEW: Leggetid (00:00–08:00)</div>
+  <div class="glow"></div>
+
+  <div class="container">
+    <div class="pulse-row">
+      <span class="pulse-dot"></span>
+      <span class="live-label">Leggetid</span>
+    </div>
+
+    <div class="house-wrap">
+      <svg class="house-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Chimney -->
+        <rect x="108" y="30" width="16" height="30" rx="2" fill="#c4b8a8"/>
+        <!-- Roof -->
+        <path d="M12 78 L80 24 L148 78Z" fill="#c4b8a8" stroke="#b0a494" stroke-width="1"/>
+        <!-- Walls -->
+        <rect x="28" y="78" width="104" height="66" rx="4" fill="#ddd5c9"/>
+        <!-- Door -->
+        <rect x="66" y="104" width="28" height="40" rx="4" fill="#b0a494"/>
+        <circle cx="88" cy="126" r="2.5" fill="#8a7b6b"/>
+        <!-- Windows (dim blue) -->
+        <rect x="38" y="92" width="22" height="22" rx="3" fill="#8b9dc3" opacity="0.35"/>
+        <rect x="100" y="92" width="22" height="22" rx="3" fill="#8b9dc3" opacity="0.35"/>
+        <!-- Window panes -->
+        <line x1="49" y1="92" x2="49" y2="114" stroke="#ddd5c9" stroke-width="1.5"/>
+        <line x1="38" y1="103" x2="60" y2="103" stroke="#ddd5c9" stroke-width="1.5"/>
+        <line x1="111" y1="92" x2="111" y2="114" stroke="#ddd5c9" stroke-width="1.5"/>
+        <line x1="100" y1="103" x2="122" y2="103" stroke="#ddd5c9" stroke-width="1.5"/>
+        <!-- Zzz -->
+        <g>
+          <text class="zzz zzz1" x="120" y="26" font-size="14" font-weight="700">z</text>
+          <text class="zzz zzz2" x="132" y="16" font-size="11" font-weight="700">z</text>
+          <text class="zzz zzz3" x="141" y="8" font-size="9" font-weight="700">z</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="status-block">
+      <div class="question">Er Oliver våken?</div>
+      <div class="answer">Neida, god natt!</div>
+      <div class="subtitle">Oliver sover nok nå.</div>
+    </div>
+
+    <div class="cta-card">
+      <span class="cta-emoji">🌙</span>
+      <span class="cta-text">Det er natt — kom tilbake etter kl. 08!</span>
+    </div>
+
+    <div class="source-badge">😴 Sover</div>
+    <div class="timestamp">Sist oppdatert: 2 timer siden</div>
+  </div>
+</body>
+</html>

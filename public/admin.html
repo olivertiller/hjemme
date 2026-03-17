@@ -169,6 +169,25 @@
       opacity: 0.35;
       pointer-events: none;
     }
+
+    .auto-status {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: rgba(90, 138, 60, 0.06);
+      border: 1px solid rgba(90, 138, 60, 0.12);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .auto-status.phone {
+      background: rgba(90, 138, 60, 0.08);
+      border-color: rgba(90, 138, 60, 0.18);
+    }
+    .auto-status strong {
+      color: var(--text-primary);
+    }
   </style>
 </head>
 <body>
@@ -202,6 +221,8 @@
       </div>
     </div>
 
+    <div class="auto-status" id="autoStatus"></div>
+
     <div class="feedback" id="feedback"></div>
   </div>
 
@@ -230,12 +251,24 @@
       return $('token').value.trim();
     }
 
-    // Load current status on open
+    function renderAutoStatus(data) {
+      const el = $('autoStatus');
+      if (data.source === 'phone') {
+        el.className = 'auto-status phone';
+        el.innerHTML = '📱 <strong>Automatisk sporet</strong> — iPhone oppdaterer statusen';
+      } else {
+        el.className = 'auto-status';
+        el.innerHTML = '✏️ Sist oppdatert manuelt';
+      }
+    }
+
+    // Load current status on open + poll every 10s
     async function loadStatus() {
       try {
         const res = await fetch('/api/status');
         const data = await res.json();
         renderToggle(data.home);
+        renderAutoStatus(data);
       } catch (_) {
         showFeedback('Klarte ikke å hente status', 'error');
       }
@@ -260,7 +293,7 @@
             'Content-Type': 'application/json',
             'X-Admin-Token': token,
           },
-          body: JSON.stringify({ home: newHome }),
+          body: JSON.stringify({ home: newHome, source: 'manual' }),
         });
 
         if (!res.ok) {
@@ -270,6 +303,7 @@
         } else {
           const data = await res.json();
           renderToggle(data.home);
+          renderAutoStatus(data);
           showFeedback(data.home ? 'Venner kan nå se at du er hjemme!' : 'Status oppdatert — ikke hjemme.', 'ok');
         }
       } catch (_) {
@@ -295,6 +329,7 @@
     });
 
     loadStatus();
+    setInterval(loadStatus, 10_000);
   </script>
 </body>
 </html>
