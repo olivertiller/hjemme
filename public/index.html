@@ -375,9 +375,10 @@
       // Zzz animation
       $('zzzGroup').className.baseVal = bedtime ? 'zzz-group visible' : 'zzz-group';
 
-      $('question').textContent = bedtime ? 'Er Oliver våken?' : 'Er Oliver hjemme?';
+      $('question').textContent = bedtime ? '' : 'Er Oliver hjemme?';
+      $('question').style.display = bedtime ? 'none' : '';
       $('answer').className = `answer ${cls}`;
-      $('answer').textContent = bedtime ? 'Neida, god natt!' : (home ? 'Ja!' : 'Nei');
+      $('answer').textContent = bedtime ? 'God natt!' : (home ? 'Ja!' : 'Nei');
 
       $('subtitle').textContent = bedtime
         ? 'Oliver sover nok nå.'
@@ -401,7 +402,8 @@
         $('sourceBadge').textContent = isPhone ? '📱 Automatisk sporet' : '✏️ Manuelt oppdatert';
       }
 
-      $('timestamp').textContent = `Sist oppdatert: ${timeAgo(updatedAt)}`;
+      $('timestamp').textContent = bedtime ? '' : `Sist oppdatert: ${timeAgo(updatedAt)}`;
+      $('timestamp').style.display = bedtime ? 'none' : '';
     }
 
     async function fetchStatus() {
