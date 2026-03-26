@@ -406,9 +406,16 @@
       $('timestamp').style.display = bedtime ? 'none' : '';
     }
 
+    let isInitialLoad = true;
+
     async function fetchStatus() {
       try {
-        const res = await fetch('/api/status');
+        const headers = {};
+        if (isInitialLoad) {
+          headers['X-Initial-Load'] = '1';
+          isInitialLoad = false;
+        }
+        const res = await fetch('/api/status', { headers });
         if (!res.ok) throw new Error('Feil ved henting');
         const data = await res.json();
         currentStatus = data;

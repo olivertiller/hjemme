@@ -188,6 +188,54 @@
     .auto-status strong {
       color: var(--text-primary);
     }
+
+    .visits-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .visits-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      text-align: center;
+    }
+    .visits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .visits-day {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .visit-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid rgba(44, 36, 32, 0.06);
+      font-size: 0.9rem;
+    }
+    .visit-time {
+      font-weight: 600;
+    }
+    .visit-ip {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-family: monospace;
+    }
+    .visits-empty {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -224,6 +272,13 @@
     <div class="auto-status" id="autoStatus"></div>
 
     <div class="feedback" id="feedback"></div>
+
+    <div class="visits-section" id="visitsSection">
+      <h2 class="visits-title">Besøkslogg</h2>
+      <div class="visits-list" id="visitsList">
+        <p class="visits-empty">Laster …</p>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -330,6 +385,51 @@
 
     loadStatus();
     setInterval(loadStatus, 10_000);
+
+    // Visit log
+    async function loadVisits() {
+      const token = getToken();
+      if (!token) {
+        $('visitsList').innerHTML = '<p class="visits-empty">Skriv inn token for å se besøkslogg</p>';
+        return;
+      }
+      try {
+        const res = await fetch('/api/visits', {
+          headers: { 'X-Admin-Token': token },
+        });
+        if (!res.ok) {
+          $('visitsList').innerHTML = '<p class="visits-empty">Kunne ikke hente besøkslogg</p>';
+          return;
+        }
+        const visits = await res.json();
+        const days = Object.keys(visits).sort().reverse();
+
+        if (days.length === 0) {
+          $('visitsList').innerHTML = '<p class="visits-empty">Ingen besøk ennå</p>';
+          return;
+        }
+
+        // Show last 7 days
+        let html = '';
+        for (const day of days.slice(0, 7)) {
+          const entries = visits[day];
+          html += `<div class="visits-day">${day} — ${entries.length} besøk</div>`;
+          for (const v of entries) {
+            html += `<div class="visit-entry">
+              <span class="visit-time">${v.time}</span>
+              <span class="visit-ip">${v.ip}</span>
+            </div>`;
+          }
+        }
+        $('visitsList').innerHTML = html;
+      } catch (_) {
+        $('visitsList').innerHTML = '<p class="visits-empty">Feil ved henting av besøkslogg</p>';
+      }
+    }
+
+    loadVisits();
+    // Reload visits when token changes
+    $('token').addEventListener('input', loadVisits);
   </script>
 </body>
 </html>

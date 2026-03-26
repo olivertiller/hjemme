@@ -7,6 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'endre-dette-til-noe-hemmelig';
 const STATE_FILE = path.join(__dirname, 'state.json');
+const VISITS_FILE = path.join(__dirname, 'visits.json');
 
 // --- State persistence ---
 
@@ -25,6 +26,29 @@ function saveState(state) {
 
 let state = loadState();
 
+// --- Visit logging ---
+
+function loadVisits() {
+  try {
+    if (fs.existsSync(VISITS_FILE)) {
+      return JSON.parse(fs.readFileSync(VISITS_FILE, 'utf8'));
+    }
+  } catch (_) {}
+  return {};
+}
+
+function logVisit(ip) {
+  const visits = loadVisits();
+  const now = new Date();
+  // Date key in Oslo timezone
+  const dateKey = now.toLocaleDateString('sv-SE', { timeZone: 'Europe/Oslo' });
+  const time = now.toLocaleTimeString('sv-SE', { timeZone: 'Europe/Oslo' });
+
+  if (!visits[dateKey]) visits[dateKey] = [];
+  visits[dateKey].push({ time, ip: ip || 'ukjent' });
+  fs.writeFileSync(VISITS_FILE, JSON.stringify(visits, null, 2));
+}
+
 // --- Middleware ---
 
 app.use(cors());
@@ -34,12 +58,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 // --- API routes ---
 
 // Public: get current status
-app.get('/api/status', (_req, res) => {
+app.get('/api/status', (req, res) => {
+  // Log visit on first fetch (not polls) — client sends header on initial load
+  if (req.headers['x-initial-load']) {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip;
+    logVisit(ip);
+  }
+
   res.json({
     home: state.home,
     updatedAt: state.updatedAt,
     source: state.source || 'manual',
   });
+});
+
+// Admin: get visit log
+app.get('/api/visits', (req, res) => {
+  const token = req.headers['x-admin-token'];
+  if (token !== ADMIN_TOKEN) {
+    return res.status(401).json({ error: 'Ugyldig token' });
+  }
+  res.json(loadVisits());
 });
 
 // Admin: update status (requires token)
